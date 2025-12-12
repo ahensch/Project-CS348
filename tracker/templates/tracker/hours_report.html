@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Alpha Phi Omega Member Hours Report</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 20px; 
+      background-color: #fafafa;
+    }
+
+    .navbar {
+      background-color: #003366;
+      overflow: hidden;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .navbar a {
+      float: left;
+      color: white;
+      text-align: center;
+      padding: 14px 20px;
+      text-decoration: none;
+    }
+    .navbar a:hover {
+      background-color: #0059b3;
+    }
+
+    table { 
+      border-collapse: collapse; 
+      width: 100%; 
+      margin-bottom: 20px; 
+      background-color: white;
+    }
+    th, td { 
+      border: 1px solid #ccc; 
+      padding: 8px; 
+      text-align: center; 
+    }
+    th { background-color: #f0f0f0; }
+
+    .met { background-color: #d2f8d2; }
+    .notmet { background-color: #f8d2d2; }
+
+    form {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form label { margin-right: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <a href="/">🏠 Home</a>
+    <a href="/report/">📊 Report</a>
+    <a href="/admin/">⚙️ Admin</a>
+  </div>
+
+  <h1>Alpha Phi Omega Member Hours Report</h1>
+
+  <!-- FILTER FORM -->
+  <form method="get">
+    <label for="member">Select member:</label>
+    <select name="member" id="member">
+      <option value="">All Members</option>
+      {% for member in members %}
+        <option value="{{ member.id }}" {% if selected_member == member.id|stringformat:"s" %}selected{% endif %}>
+          {{ member.name }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">Filter</button>
+  </form>
+
+  <!-- REPORT TABLES -->
+  {% for item in report_data %}
+    <h2>{{ item.member.name }} ({{ item.member.status }})</h2>
+
+    <table>
+      <tr>
+        <th>Category</th>
+        <th>Completed</th>
+        <th>Required</th>
+      </tr>
+
+      {% for cat, done, req in item.rows %}
+        <tr>
+          <td>{{ cat }}</td>
+          <td>{{ done }}</td>
+          <td>{{ req }}</td>
+        </tr>
+      {% endfor %}
+
+      <tr class="{% if item.met %}met{% else %}notmet{% endif %}">
+        <th>Total</th>
+        <th>{{ item.total_completed }}</th>
+        <th>{{ item.total_required }}</th>
+      </tr>
+    </table>
+  {% endfor %}
+</body>
+</html>
